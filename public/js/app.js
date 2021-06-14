@@ -2517,6 +2517,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! toastr */ "./node_modules/toastr/toastr.js");
+/* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(toastr__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -2582,14 +2584,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "index",
+  data: function data() {
+    return {
+      selected: [],
+      isSelected: true,
+      selectedAll: false
+    };
+  },
   mounted: function mounted() {
     this.$store.dispatch('allPost');
   },
   computed: {
     getallPost: function getallPost() {
       return this.$store.getters.getPost;
+    }
+  },
+  watch: {
+    selected: function selected(_selected) {
+      this.selectedAll = _selected.length === this.getallPost.length;
+      this.isSelected = _selected.length < 1;
     }
   },
   methods: {
@@ -2609,30 +2642,75 @@ __webpack_require__.r(__webpack_exports__);
     //     }
     //     return data[status]
     // },
-    removePost: function removePost(id) {
+    selectAll: function selectAll(event) {
       var _this = this;
 
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          axios.get('/remove-post/' + id).then(function (response) {
-            Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+      if (event.target.checked === false) {
+        this.selected = [];
+      } else {
+        this.getallPost.forEach(function (post) {
+          if (_this.selected.indexOf(post.id) === -1) {
+            _this.selected.push(post.id);
+          }
+        });
+      }
+    },
+    removePost: function removePost(id) {
+      var _this2 = this;
 
-            _this.$store.dispatch('allPost');
-          })["catch"](function (error) {});
-        }
+      this.confirm(function () {
+        axios.get('/remove-post/' + id).then(function (response) {
+          Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+
+          _this2.$store.dispatch('allPost');
+        })["catch"](function (error) {});
       });
     },
     emptyData: function emptyData() {
       return this.getallPost.length < 1;
-    }
+    },
+    removeItems: function removeItems(selected) {
+      var _this3 = this;
+
+      this.confirm(function () {
+        var test = _this3;
+        axios.post('/remove-selected-posts/', {
+          data: selected
+        }).then(function (response) {
+          Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+          toastr__WEBPACK_IMPORTED_MODULE_0___default.a.success(response.data.total + '  ' + '    Selected Category Deleted Successfully!!!');
+          test.selected = [];
+          test.isSelected = true;
+          test.selectedAll = false;
+
+          _this3.$store.dispatch('allPost');
+        })["catch"](function (errror) {});
+      });
+    } // changeStatus(selected,status){
+    //     let msg=status=== 1?"active":"Inactive";
+    //
+    //     this.confirm(()=>{
+    //         let test=this;
+    //         axios.post("/post-change-status",{data:selected,status:status}).then((response)=>{
+    //
+    //             Swal.fire(
+    //                 'Deleted!',
+    //                 'Your selected Item is   '+msg,
+    //                 'success'
+    //             )
+    //             toastr.success(response.data.total+'  '+'    Selected Category  Successfully!!!   '+'   '+msg);
+    //             test.selected=[];
+    //             test.isSelected=true;
+    //             test.selectedAll=false;
+    //             this.$store.dispatch('allCategory');
+    //
+    //
+    //         }).catch((error)=>{
+    //
+    //         })
+    //     })
+    // }
+
   }
 });
 
@@ -65715,25 +65793,121 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticClass: "card-body table-responsive p-0" }, [
           _c("table", { staticClass: "table table-hover text-nowrap" }, [
-            _vm._m(0),
+            _c("thead", [
+              _c("tr", [
+                _c("th", { attrs: { width: "2%" } }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.selectedAll,
+                        expression: "selectedAll"
+                      }
+                    ],
+                    attrs: { disabled: _vm.emptyData(), type: "checkbox" },
+                    domProps: {
+                      checked: Array.isArray(_vm.selectedAll)
+                        ? _vm._i(_vm.selectedAll, null) > -1
+                        : _vm.selectedAll
+                    },
+                    on: {
+                      click: _vm.selectAll,
+                      change: function($event) {
+                        var $$a = _vm.selectedAll,
+                          $$el = $event.target,
+                          $$c = $$el.checked ? true : false
+                        if (Array.isArray($$a)) {
+                          var $$v = null,
+                            $$i = _vm._i($$a, $$v)
+                          if ($$el.checked) {
+                            $$i < 0 && (_vm.selectedAll = $$a.concat([$$v]))
+                          } else {
+                            $$i > -1 &&
+                              (_vm.selectedAll = $$a
+                                .slice(0, $$i)
+                                .concat($$a.slice($$i + 1)))
+                          }
+                        } else {
+                          _vm.selectedAll = $$c
+                        }
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("th", { attrs: { width: "2%" } }, [_vm._v("ID")]),
+                _vm._v(" "),
+                _c("th", { attrs: { width: "10%" } }, [_vm._v("Category")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Post Title")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Author")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Image")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Create")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Action")])
+              ])
+            ]),
             _vm._v(" "),
             _c(
               "tbody",
               [
                 _vm._l(_vm.getallPost, function(post, index) {
                   return _c("tr", [
-                    _c("td", [_vm._v(_vm._s(index + 1))]),
+                    _c("td", { attrs: { width: "2%" } }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selected,
+                            expression: "selected"
+                          }
+                        ],
+                        attrs: { type: "checkbox" },
+                        domProps: {
+                          value: post.id,
+                          checked: Array.isArray(_vm.selected)
+                            ? _vm._i(_vm.selected, post.id) > -1
+                            : _vm.selected
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.selected,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = post.id,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 && (_vm.selected = $$a.concat([$$v]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.selected = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.selected = $$c
+                            }
+                          }
+                        }
+                      })
+                    ]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(post.category.name))]),
+                    _c("td", { attrs: { width: "2%" } }, [
+                      _vm._v(_vm._s(index + 1))
+                    ]),
                     _vm._v(" "),
-                    _c("td", [
-                      _vm._v(_vm._s(_vm._f("subString")(post.title, 12, "...")))
+                    _c("td", { attrs: { width: "10%" } }, [
+                      _vm._v(_vm._s(post.category.name))
                     ]),
                     _vm._v(" "),
                     _c("td", [
-                      _vm._v(
-                        _vm._s(_vm._f("subString")(post.description, 25, "..."))
-                      )
+                      _vm._v(_vm._s(_vm._f("subString")(post.title, 12, "...")))
                     ]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(post.user.name))]),
@@ -65767,7 +65941,61 @@ var render = function() {
                   ])
                 }),
                 _vm._v(" "),
-                _vm.emptyData() ? _c("tr", [_vm._m(1)]) : _vm._e()
+                !_vm.emptyData()
+                  ? _c("tr", [
+                      _c(
+                        "td",
+                        { staticClass: "float-left", attrs: { colspan: "6" } },
+                        [
+                          _c("div", { staticClass: "dropdown" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "btn btn-success btn-sm dropdown-toggle",
+                                attrs: {
+                                  type: "button",
+                                  disabled: _vm.isSelected,
+                                  id: "dropdownMenu2",
+                                  "data-toggle": "dropdown"
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                        Action\n                                    "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "dropdown-menu",
+                                attrs: { "aria-labelledby": "dropdownMenu2" }
+                              },
+                              [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "dropdown-item",
+                                    attrs: { type: "button" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.removeItems(_vm.selected)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v("Delete Seleted")]
+                                )
+                              ]
+                            )
+                          ])
+                        ]
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.emptyData() ? _c("tr", [_vm._m(0)]) : _vm._e()
               ],
               2
             )
@@ -65778,30 +66006,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("ID")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Category")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Post Title")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Content")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Author")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Image")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Create")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Action")])
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

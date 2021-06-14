@@ -22,4 +22,28 @@ class PostController extends Controller
         }
         return response()->json(['success'=>$success],200);
     }
+    public function deleteItems(Request $request){
+        $s=0;
+       foreach ($request->data as $id){
+           $post=Post::findOrFail($id);
+           $post->delete();
+           $s++;
+       }
+        $success=$s>0?true:false;
+        return response()->json(['success'=>$success,'total'=>$s],200);
+
+    }
+//    public  function  changeStatus(Request $request){
+//        $s=0;
+//        foreach ($request->data as $id){
+//            $post=Post::findOrFail($id);
+//            $post->status=$request->status;
+//            $post->update();
+//            $s++;
+//        }
+//        $success=$s>0?true:false;
+//        return response()->json(['success'=>$success,'total'=>$s],200);
+//
+//
+//    }
 }

@@ -28,9 +28,12 @@ Route::post('/store-category','CategoryController@store')->name('category.store'
 Route::get('/remove-category/{id}','CategoryController@delete')->name('category.delete');
 Route::get('/edit-category/{id}','CategoryController@edit')->name('category.edit');
 Route::post('/update-category/{id}','CategoryController@update')->name('category.update');
-Route::post('/categories-remove/','CategoryController@deleteItems')->name('category.update');
+Route::post('/categories-remove/','CategoryController@deleteItems')->name('category.deleteditems');
 Route::post('/categories-change-status/','CategoryController@ChangeStatus')->name('category.change.status');
+
 
 Route::get('/post','PostController@post')->name('post.index');
 Route::get('/remove-post/{id}','PostController@delete')->name('post.delete');
+Route::post('/remove-selected-posts/','PostController@deleteItems')->name('post.deleteditems');
+//Route::post('/post-change-status/','PostController@changeStatus')->name('post.change.status');
 
