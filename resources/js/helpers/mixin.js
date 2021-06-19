@@ -14,6 +14,31 @@ Vue.mixin({
                 if (result.isConfirmed) callback();
             })
 
-        }
+        },
+        loadImage:function (e) {
+            let file=e.target.files[0];
+            if (file.size<10485760){
+                let reader = new FileReader();
+                let test=this;
+                reader.onload = function(e) {
+                    // The file's text will be printed here
+                    test.form.image=e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }else {
+                toastr.error("Image Size is too large");
+            }
+
+
+        },
+    fileLink:function (name){
+
+            if( name!=null && name.length<256)
+                return 'assets/fontend/post/'+name;
+            else
+                return  this.form.image;
+
+
+    }
     }
 })

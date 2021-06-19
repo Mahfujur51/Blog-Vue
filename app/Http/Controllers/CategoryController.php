@@ -75,4 +75,9 @@ class CategoryController extends Controller
         $success=$s>0?true:false;
         return response()->json(['success'=>$success,'total'=>$s],200);
     }
+    public  function  getActive(){
+        $categories=Category::where('status',1)->get();
+        return response()->json(['categories'=>$categories],200);
+
+    }
 }

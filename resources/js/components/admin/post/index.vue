@@ -40,10 +40,10 @@
                             <td width="10%">{{post.category.name}}</td>
                             <td>{{post.title | subString(12,'...')}}</td>
                             <td>{{post.user.name}}</td>
-                            <td><img :src="post.image" alt="" width="60"></td>
+                            <td><img :src="fileLink(post.image)" alt="" width="60"></td>
                             <td>{{post.created_at | time}}</td>
                             <td>
-                                <button class="btn btn-success btn-sm">Edit</button>
+                                <router-link :to="`/edit-post/${post.id}`" class="btn btn-success btn-sm">Edit</router-link>
                                 <button  class="btn btn-danger btn-sm" @click="removePost(post.id)">Delete</button>
                             </td>
                         </tr>
@@ -180,31 +180,7 @@ export default {
                })
            } )
 
-        },
-        // changeStatus(selected,status){
-        //     let msg=status=== 1?"active":"Inactive";
-        //
-        //     this.confirm(()=>{
-        //         let test=this;
-        //         axios.post("/post-change-status",{data:selected,status:status}).then((response)=>{
-        //
-        //             Swal.fire(
-        //                 'Deleted!',
-        //                 'Your selected Item is   '+msg,
-        //                 'success'
-        //             )
-        //             toastr.success(response.data.total+'  '+'    Selected Category  Successfully!!!   '+'   '+msg);
-        //             test.selected=[];
-        //             test.isSelected=true;
-        //             test.selectedAll=false;
-        //             this.$store.dispatch('allCategory');
-        //
-        //
-        //         }).catch((error)=>{
-        //
-        //         })
-        //     })
-        // }
+        }
 
     }
 }

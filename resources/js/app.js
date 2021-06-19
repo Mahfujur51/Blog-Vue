@@ -6,7 +6,7 @@ window.Form =Form
 
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('public-master', require('./components/fontend/PublicMaster').default);
 Vue.component('admin-master',require('./components/admin/AdminMaster').default)
 import {routes} from  './route/routes'
 const router = new VueRouter({
@@ -30,6 +30,9 @@ window.axios=axios
 
 import {moment} from "./filter/filter"
 import  "./helpers/mixin"
+import CKEditor from '@ckeditor/ckeditor5-vue2';
+
+Vue.use( CKEditor );
 
 const app = new Vue({
 
